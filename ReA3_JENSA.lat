@@ -1,0 +1,293 @@
+#Beam envelope simulation.
+
+sim_type = "MomentMatrix";
+
+# Global parameters.
+
+# Multipole level: 0 only include focusing and defocusing effects,
+#                   1 include dipole terms,
+#                   2 include quadrupole terms.
+MpoleLevel = "2";
+
+# Include emittance growth from RF Cavity.
+EmitGrowth = "1";
+
+# Dipole strength adjusted to beam energy.
+HdipoleFitMode = "1";
+
+AMU   = 931.49432e6;   # Atomic mass unit [eV/c^2].
+
+IonEs = AMU;           # Nucleon mass [eV/u].
+IonEk = 0.6e6;         # Kinetic energy at LS1 entrance [eV/u].
+
+# Define Initial Conditions for the Charge States.
+# Units are: [mm, rad, mm, rad, rad, MeV/u]
+
+IonChargeStates = [10.0/40.0];
+NCharge         = [1000.0];
+
+BaryCenter0 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0];
+
+S0 = [
+    1.0,        0.0,        0.0,        0.0,        0.0,        0.0,        0.0,
+    0.0,        6.5e-5,     0.0,        0.0,        0.0,        0.0,        0.0,
+    0.0,        0.0,        1.0,        0.0,        0.0,        0.0,        0.0,
+    0.0,        0.0,        0.0,        6.5e-5,     0.0,        0.0,        0.0,
+    0.0,        0.0,        0.0,        0.0,        0.0,        0.0,        0.0,
+    0.0,        0.0,        0.0,        0.0,        0.0,        0.0,        0.0,
+    0.0,        0.0,        0.0,        0.0,        0.0,        0.0,        0.0
+];
+
+
+Eng_Data_Dir = dir("data");
+
+S: source, vector_variable="BaryCenter", matrix_variable = "S";
+
+drift_1: drift, L = 0.3941187;
+REA_BTS20:FC_D1039: marker;
+drift_2: drift, L = 0.4750187;
+REA_CK01:SOL1_D1045_0: solenoid, L = 0.1, B = 5.0;
+REA_CK01:DCH_D1045: orbtrim, theta_x = 0.0;
+REA_CK01:DCV_D1045: orbtrim, theta_y = 0.0;
+REA_CK01:SOL1_D1045_1: solenoid, L = 0.1, B = 5.0;
+drift_3: drift, L = 0.1229983;
+REA_CK01:CAV1_D1049: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -90.0, scl_fac = 1.0;
+drift_4: drift, L = 0.1229983;
+REA_CK01:SOL2_D1052_2: solenoid, L = 0.1, B = 5.0;
+REA_CK01:DCH_D1052: orbtrim, theta_x = 0.0;
+REA_CK01:DCV_D1052: orbtrim, theta_y = 0.0;
+REA_CK01:SOL2_D1052_3: solenoid, L = 0.1, B = 5.0;
+drift_5: drift, L = 0.6060434;
+REA_WK01:FC_D1059: marker;
+drift_6: drift, L = 0.4974677;
+REA_CL01:CAV1_D1065: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_7: drift, L = 0.1230016;
+REA_CL01:SOL1_D1069_4: solenoid, L = 0.1, B = 5.0;
+REA_CL01:DCH_D1069: orbtrim, theta_x = 0.0;
+REA_CL01:DCV_D1069: orbtrim, theta_y = 0.0;
+REA_CL01:SOL1_D1069_5: solenoid, L = 0.1, B = 5.0;
+drift_8: drift, L = 0.122995;
+REA_CL01:CAV2_D1072: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_9: drift, L = 0.0350246;
+REA_CL01:CAV3_D1075: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_10: drift, L = 0.1230016;
+REA_CL01:SOL2_D1078_6: solenoid, L = 0.1, B = 5.0;
+REA_CL01:DCH_D1078: orbtrim, theta_x = 0.0;
+REA_CL01:DCV_D1078: orbtrim, theta_y = 0.0;
+REA_CL01:SOL2_D1078_7: solenoid, L = 0.1, B = 5.0;
+drift_11: drift, L = 0.1230016;
+REA_CL01:CAV4_D1082: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_12: drift, L = 0.0350246;
+REA_CL01:CAV5_D1084: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_13: drift, L = 0.122995;
+REA_CL01:SOL3_D1088_8: solenoid, L = 0.1, B = 5.0;
+REA_CL01:DCH_D1088: orbtrim, theta_x = 0.0;
+REA_CL01:DCV_D1088: orbtrim, theta_y = 0.0;
+REA_CL01:SOL3_D1088_9: solenoid, L = 0.1, B = 5.0;
+drift_14: drift, L = 0.1230016;
+REA_CL01:CAV6_D1091: rfcavity, L = 0.24, cavtype = "Generic", datafile = "thinlenlon_41.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_15: drift, L = 0.4394803;
+REA_WL01:FC_D1097: marker;
+drift_16: drift, L = 0.3668396;
+REA_CM01:CAV1_D1102: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_17: drift, L = 0.1543299;
+REA_CM01:SOL1_D1106_10: solenoid, L = 0.1, B = 5.0;
+REA_CM01:DCH_D1106: orbtrim, theta_x = 0.0;
+REA_CM01:DCV_D1106: orbtrim, theta_y = 0.0;
+REA_CM01:SOL1_D1106_11: solenoid, L = 0.1, B = 5.0;
+drift_18: drift, L = 0.1543299;
+REA_CM01:CAV2_D1111: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_19: drift, L = 0.0976878;
+REA_CM01:CAV3_D1115: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_20: drift, L = 0.0976878;
+REA_CM01:CAV4_D1118: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_21: drift, L = 0.1543299;
+REA_CM01:SOL2_D1123_12: solenoid, L = 0.1, B = 5.0;
+REA_CM01:DCH_D1123: orbtrim, theta_x = 0.0;
+REA_CM01:DCV_D1123: orbtrim, theta_y = 0.0;
+REA_CM01:SOL2_D1123_13: solenoid, L = 0.1, B = 5.0;
+drift_22: drift, L = 0.1543299;
+REA_CM01:CAV5_D1127: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_23: drift, L = 0.0976878;
+REA_CM01:CAV6_D1131: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_24: drift, L = 0.0976878;
+REA_CM01:CAV7_D1135: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_25: drift, L = 0.1543299;
+REA_CM01:SOL3_D1139_14: solenoid, L = 0.1, B = 5.0;
+REA_CM01:DCH_D1139: orbtrim, theta_x = 0.0;
+REA_CM01:DCV_D1139: orbtrim, theta_y = 0.0;
+REA_CM01:SOL3_D1139_15: solenoid, L = 0.1, B = 5.0;
+drift_26: drift, L = 0.1543299;
+REA_CM01:CAV8_D1143: rfcavity, L = 0.3, cavtype = "Generic", datafile = "thinlenlon_85.lat", f = 80.5e6, phi = -20.0, scl_fac = 1.0;
+drift_27: drift, L = 0.5154161;
+REA_WM01:FC_D1149: marker;
+drift_28: drift, L = 0.270787230986;
+zrotation_0: orbtrim, xyrotate = 90.0;
+REA_BTS23:DV_D1155: sbend, L = 0.75, phi = -45.0, phi1 = 22.5, phi2 = 22.5, bg = 0.08032207403308904;
+zrotation_1: orbtrim, xyrotate = -90.0;
+drift_29: drift, L = 0.374573330986;
+REA_BTS25:Q_D1164: quadrupole, L = 0.15, B2 = -16.9322666667;
+drift_30: drift, L = 0.4004939;
+REA_BTS25:Q_D1169: quadrupole, L = 0.15, B2 = 15.1909333333;
+drift_31: drift, L = 0.154562105;
+drift_32: drift, L = 0.040004995;
+REA_BTS25:DCH_D1172: orbtrim, theta_x = 0.0;
+drift_33: drift, L = 0.08000999;
+REA_BTS25:DCV_D1172: orbtrim, theta_y = 0.0;
+drift_34: drift, L = 0.040004995;
+drift_35: drift, L = 0.090331705;
+REA_BTS25:Q_D1174: quadrupole, L = 0.15, B2 = -13.1178666667;
+drift_36: drift, L = 0.299571;
+REA_BTS25:VD_D1178: marker;
+drift_37: drift, L = 0.03241;
+REA_BTS25:FC_D1178: marker;
+drift_38: drift, L = 0.2680302;
+REA_BTS25:Q_D1181: quadrupole, L = 0.15, B2 = -13.1178666667;
+drift_39: drift, L = 0.3253864;
+REA_BTS25:Q_D1186: quadrupole, L = 0.15, B2 = 15.1909333333;
+drift_40: drift, L = 0.4004688;
+REA_BTS25:Q_D1192: quadrupole, L = 0.15, B2 = -16.9322666667;
+drift_41: drift, L = 0.374057730986;
+zrotation_2: orbtrim, xyrotate = -90.0;
+REA_BTS25:DV_D1200: sbend, L = 0.75, phi = 45.0, phi1 = 22.5, phi2 = 22.5, bg = 0.08032207403308904;
+zrotation_3: orbtrim, xyrotate = 90.0;
+drift_42: drift, L = 0.401204430986;
+REA_BTS25:FC_D1207: marker;
+drift_43: drift, L = 1.11203647606;
+drift_44: drift, L = 0.05;
+REA_BTS26:DCH_D1219: orbtrim, theta_x = 0.0;
+drift_45: drift, L = 0.1;
+REA_BTS26:DCV_D1219: orbtrim, theta_y = 0.0;
+drift_46: drift, L = 0.05;
+drift_47: drift, L = 0.08;
+REA_BTS26:Q_D1221: quadrupole, L = 0.15, B2 = 12.7722666667;
+drift_48: drift, L = 0.499994;
+REA_BTS26:Q_D1228: quadrupole, L = 0.15, B2 = -9.48106666667;
+drift_49: drift, L = 1.606001;
+REA_BTS26:Q_D1245: quadrupole, L = 0.15, B2 = 10.3714666667;
+drift_50: drift, L = 0.500005;
+REA_BTS26:Q_D1252: quadrupole, L = 0.15, B2 = -10.0413333333;
+drift_51: drift, L = 0.356275;
+REA_BTS30:VD_D1256: marker;
+drift_52: drift, L = 0.215902;
+REA_BTS30:FC_D1256: marker;
+drift_53: drift, L = 1.142822;
+drift_54: drift, L = 0.05;
+REA_BTS30:DCH_D1270: orbtrim, theta_x = 0.0;
+drift_55: drift, L = 0.1;
+REA_BTS30:DCV_D1270: orbtrim, theta_y = 0.0;
+drift_56: drift, L = 0.05;
+drift_57: drift, L = 0.08;
+REA_BTS30:Q_D1272: quadrupole, L = 0.15, B2 = 2.98373333333;
+drift_58: drift, L = 0.185;
+REA_BTS30:Q_D1275: quadrupole, L = 0.15, B2 = -2.41013333333;
+drift_59: drift, L = 0.464998;
+REA_BTS30:Q_D1281: quadrupole, L = 0.15, B2 = -12.8573333333;
+drift_60: drift, L = 0.185003;
+REA_BTS30:Q_D1285: quadrupole, L = 0.15, B2 = 12.2272;
+drift_61: drift, L = 0.608519;
+REA_BTS30:DH_D1296: sbend, L = 0.75, phi = 45.0, phi1 = 22.5, phi2 = 22.5, bg = 0.08032207403308904;
+drift_62: drift, L = 0.42501;
+drift_63: drift, L = 0.05;
+REA_BTS30:DCH_D1305: orbtrim, theta_x = 0.0;
+drift_64: drift, L = 0.1;
+REA_BTS30:DCV_D1305: orbtrim, theta_y = 0.0;
+drift_65: drift, L = 0.05;
+drift_66: drift, L = 0.165;
+REA_BTS30:Q_D1307: quadrupole, L = 0.15, B2 = -14.5541333333;
+drift_67: drift, L = 0.22;
+REA_BTS30:Q_D1310: quadrupole, L = 0.15, B2 = 10.1309333333;
+drift_68: drift, L = 0.3241;
+REA_BTS30:VD_D1316: marker;
+drift_69: drift, L = 0.7559;
+REA_BTS30:Q_D1323: quadrupole, L = 0.15, B2 = 10.1309333333;
+drift_70: drift, L = 0.22;
+REA_BTS30:Q_D1327: quadrupole, L = 0.15, B2 = -14.5541333333;
+drift_71: drift, L = 0.69001;
+REA_BTS30:DH_D1338: sbend, L = 0.75, phi = 45.0, phi1 = 22.5, phi2 = 22.5, bg = 0.08032207403308904;
+drift_72: drift, L = 0.28001;
+drift_73: drift, L = 0.05;
+REA_BTS30:DCH_D1345: orbtrim, theta_x = 0.0;
+drift_74: drift, L = 0.1;
+REA_BTS30:DCV_D1345: orbtrim, theta_y = 0.0;
+drift_75: drift, L = 0.05;
+drift_76: drift, L = 0.165;
+REA_BTS30:Q_D1346: quadrupole, L = 0.15, B2 = 11.5637333333;
+drift_77: drift, L = 0.19;
+REA_BTS30:Q_D1351: quadrupole, L = 0.15, B2 = -10.1928;
+drift_78: drift, L = 0.274059;
+REA_BTS30:FC_D1355: marker;
+
+drift_79: drift, L = 0.340942;
+REA_BTS30:DH_D1362: sbend, L = 0.75, phi = 45.0, phi1 = 22.5, phi2 = 22.5, bg = 0.08032207403308904;
+drift_80: drift, L = 0.250001;
+REA_BTS32:Q_D1369: quadrupole, L = 0.15, B2 = 14.8930666667;
+drift_81: drift, L = 0.625;
+REA_BTS32:DH_D1376: sbend, L = 0.75, phi = 45.0, phi1 = 22.5, phi2 = 22.5, bg = 0.08032207403308904;
+drift_82: drift, L = 0.24;
+REA_BTS34:Q_D1387: quadrupole, L = 0.15, B2 = 5.0;
+drift_83: drift, L = 0.16;
+REA_BTS34:Q_D1390: quadrupole, L = 0.15, B2 = 5.0;
+drift_84: drift, L = 1.86;
+drift_85: drift, L = 0.05;
+REA_BTS34:DCH_D1413: orbtrim, theta_x = 0.0;
+drift_86: drift, L = 0.1;
+REA_BTS34:DCV_D1413: orbtrim, theta_y = 0.0;
+drift_87: drift, L = 0.05;
+drift_88: drift, L = 0.165;
+REA_BTS34:Q_D1415: quadrupole, L = 0.15, B2 = -5.64133333333;
+drift_89: drift, L = 1.0;
+REA_BTS34:Q_D1427: quadrupole, L = 0.15, B2 = 5.0;
+drift_90: drift, L = 0.3;
+drift_91: drift, L = 0.05;
+REA_BTS34:DCH_D1431: orbtrim, theta_x = 0.0;
+drift_92: drift, L = 0.1;
+REA_BTS34:DCV_D1431: orbtrim, theta_y = 0.0;
+drift_93: drift, L = 0.05;
+drift_94: drift, L = 0.83;
+REA_BTS34:Q_D1439: quadrupole, L = 0.15, B2 = 5.0;
+drift_95: drift, L = 0.07;
+REA_BTS34:Q_D1443: quadrupole, L = 0.15, B2 = 5.0;
+drift_96: drift, L = 0.3;
+REA_BTS34:FC_D1448: marker;
+drift_97: drift, L = 0.2159;
+REA_BTS34:VD_D1448: marker;
+
+common: LINE = (
+    drift_1, REA_BTS20:FC_D1039, drift_2, REA_CK01:SOL1_D1045_0, REA_CK01:DCH_D1045, REA_CK01:DCV_D1045, REA_CK01:SOL1_D1045_1,
+    drift_3, REA_CK01:CAV1_D1049, drift_4, REA_CK01:SOL2_D1052_2, REA_CK01:DCH_D1052, REA_CK01:DCV_D1052, REA_CK01:SOL2_D1052_3,
+    drift_5, REA_WK01:FC_D1059, drift_6, REA_CL01:CAV1_D1065, drift_7, REA_CL01:SOL1_D1069_4, REA_CL01:DCH_D1069, REA_CL01:DCV_D1069,
+    REA_CL01:SOL1_D1069_5, drift_8, REA_CL01:CAV2_D1072, drift_9, REA_CL01:CAV3_D1075, drift_10, REA_CL01:SOL2_D1078_6,
+    REA_CL01:DCH_D1078, REA_CL01:DCV_D1078, REA_CL01:SOL2_D1078_7, drift_11, REA_CL01:CAV4_D1082, drift_12, REA_CL01:CAV5_D1084,
+    drift_13, REA_CL01:SOL3_D1088_8, REA_CL01:DCH_D1088, REA_CL01:DCV_D1088, REA_CL01:SOL3_D1088_9, drift_14, REA_CL01:CAV6_D1091,
+    drift_15, REA_WL01:FC_D1097, drift_16, REA_CM01:CAV1_D1102, drift_17, REA_CM01:SOL1_D1106_10, REA_CM01:DCH_D1106, REA_CM01:DCV_D1106,
+    REA_CM01:SOL1_D1106_11, drift_18, REA_CM01:CAV2_D1111, drift_19, REA_CM01:CAV3_D1115, drift_20, REA_CM01:CAV4_D1118, drift_21,
+    REA_CM01:SOL2_D1123_12, REA_CM01:DCH_D1123, REA_CM01:DCV_D1123, REA_CM01:SOL2_D1123_13, drift_22, REA_CM01:CAV5_D1127, drift_23,
+    REA_CM01:CAV6_D1131, drift_24, REA_CM01:CAV7_D1135, drift_25, REA_CM01:SOL3_D1139_14, REA_CM01:DCH_D1139, REA_CM01:DCV_D1139,
+    REA_CM01:SOL3_D1139_15, drift_26, REA_CM01:CAV8_D1143, drift_27, REA_WM01:FC_D1149, drift_28, zrotation_0, REA_BTS23:DV_D1155,
+    zrotation_1, drift_29, REA_BTS25:Q_D1164, drift_30, REA_BTS25:Q_D1169, drift_31, drift_32, REA_BTS25:DCH_D1172, drift_33,
+    REA_BTS25:DCV_D1172, drift_34, drift_35, REA_BTS25:Q_D1174, drift_36, REA_BTS25:VD_D1178, drift_37, REA_BTS25:FC_D1178, drift_38,
+    REA_BTS25:Q_D1181, drift_39, REA_BTS25:Q_D1186, drift_40, REA_BTS25:Q_D1192, drift_41, zrotation_2, REA_BTS25:DV_D1200, zrotation_3,
+    drift_42, REA_BTS25:FC_D1207, drift_43, drift_44, REA_BTS26:DCH_D1219, drift_45, REA_BTS26:DCV_D1219, drift_46, drift_47,
+    REA_BTS26:Q_D1221, drift_48, REA_BTS26:Q_D1228, drift_49, REA_BTS26:Q_D1245, drift_50, REA_BTS26:Q_D1252, drift_51, REA_BTS30:VD_D1256,
+    drift_52, REA_BTS30:FC_D1256, drift_53, drift_54, REA_BTS30:DCH_D1270, drift_55, REA_BTS30:DCV_D1270, drift_56, drift_57,
+    REA_BTS30:Q_D1272, drift_58, REA_BTS30:Q_D1275, drift_59, REA_BTS30:Q_D1281, drift_60, REA_BTS30:Q_D1285, drift_61, REA_BTS30:DH_D1296,
+    drift_62, drift_63, REA_BTS30:DCH_D1305, drift_64, REA_BTS30:DCV_D1305, drift_65, drift_66, REA_BTS30:Q_D1307, drift_67,
+    REA_BTS30:Q_D1310, drift_68, REA_BTS30:VD_D1316, drift_69, REA_BTS30:Q_D1323, drift_70, REA_BTS30:Q_D1327, drift_71, REA_BTS30:DH_D1338,
+    drift_72, drift_73, REA_BTS30:DCH_D1345, drift_74, REA_BTS30:DCV_D1345, drift_75, drift_76, REA_BTS30:Q_D1346, drift_77,
+    REA_BTS30:Q_D1351, drift_78, REA_BTS30:FC_D1355
+);
+
+jensa: LINE = (
+    drift_79, REA_BTS30:DH_D1362, drift_80, REA_BTS32:Q_D1369, drift_81, REA_BTS32:DH_D1376, drift_82,
+    REA_BTS34:Q_D1387, drift_83, REA_BTS34:Q_D1390, drift_84, drift_85, REA_BTS34:DCH_D1413, drift_86,
+    REA_BTS34:DCV_D1413, drift_87, drift_88, REA_BTS34:Q_D1415, drift_89, REA_BTS34:Q_D1427, drift_90,
+    drift_91, REA_BTS34:DCH_D1431, drift_92, REA_BTS34:DCV_D1431, drift_93, drift_94, REA_BTS34:Q_D1439,
+    drift_95, REA_BTS34:Q_D1443, drift_96, REA_BTS34:FC_D1448, drift_97, REA_BTS34:VD_D1448
+);
+
+cell: LINE = (
+    S, common, jensa
+);
+
+USE: cell;
