@@ -1,0 +1,95 @@
+####################################################
+# HMI Developments                                 #
+#   File containing notes on any recent changes    #
+#    that have been made to ReA Controls           #
+#   D. Crisp, created 16June2021                   #
+#                                                  #
+####################################################
+
+Alarms:
+  Alarms in the Stopped_Beam area/panel have been reorganized such that all
+    To_xxx sections have the same indentation as N4.
+  All BSS sections and BMIS (PIS) have had IN_USE pvs made (i.e.
+    BSS_BTS03:IN_USE). They're now used as enabling filters for related alarms.
+    Changing them from 0 to 1 will enable ILK alarms for the related section,
+    and vice versa.
+  SUM_STS pvs have been made for all RF cavities, these look at the enabled
+    status, the tuned status, whether either phase or amplitude have set/rd
+    mismatches, as well as ILK_LTCH_ANY alarm. This summarizes the RF state in
+    one maskable PV. Both minimizing complexity of our alarms without
+    sacrificing detail, and allowing us to more easily nullify the ILK_LTCH_ANY
+    state when the device has been put into it's fully off state. We should pay
+    attention to how it behaves when we turn on the cavities this week, to
+    verify the enabled states are captured as expected. If so, pitch to remove
+    raw ILK_LTCH_ANY pvs that are constantly in alarm.
+  Updates that have been made to databases which the alarm server refers to
+    for EPICS info, are supposed to have made the server more stable. If
+    we see any waves of disconnects, or sporadic re-enabling of disabled alarms,
+    we should promptly email Tanvi in High Level Controls. Please cc Crisp &
+    Barofsky so that we can follow any work that's done to address things.
+  ReA6 F_RD (LCW flow) alarms have been disabled until we figure out whether to
+    even expect them.
+
+HMI:
+  Added text update widgets on ReA6_Status.opi and FaradayCups.opi that display
+    the max allowable beam current for the given beam (using destination
+    parameters pulled from hourlog). A HI limit was initially set to 50%,
+    while the HIHI is set to 80%.
+  So that the beam parameters shown on the ReA6 Status page would not just be
+    from the section at LINAC1 exit, but what is being delivered, PVs being
+    displayed are ones that pull their values from what is in the hourlog.
+  Two of the 'sys_sub:MAG_ALL:SET_CMD' pvs had typos in their related IOC files.
+    These typos would have effected the group scaling actions abilities to
+    control 2 quads in BTS42, and another 2 in BTS46. This is fixed.
+  It was discovered that the PVs which allow you to copy the current hall probe
+    reading to the FB Target did not exist. They've been made, and the option
+    from the drop down seems to work as expected now.
+  Fast acting gate valves located around the CB01 module have been added to
+    overview pages.
+  energy measurement page has had an extra tab made for use of ReA6 dipole
+    D1415.
+  We already had a set of PVs that were made to replicate the purpose of our
+    dipole-energy-calibration spreadsheet, which converted either field or
+    current readings to energy and vice versa. These pvs account for our
+    measurement of D1155 dipoles rho. But another set of these pvs has been
+    made for the D1415 dipole in ReA6. Because we have not yet measured the rho
+    for this dipole, I've made the assumption that we could use the exact Same
+    as what we use for D1155 without too much error. I have no issue changing
+    it to something else, if there is a better estimation we can use.
+  The pvs which enable tasha's magnet cycling application to work have been
+    created for all ReA6 magnets. Consider any first use as a test, and let
+    Crisp know if there are any issues.
+  Labels like CFFD and ATTPC have been removed from overviews, replaced by 'GPL'
+    and either BTS45 or BTS31 written underneath. The BTS description has been
+    placed under each destination label to help be consistant with hourlog
+    destination names.
+  In Use checkboxes have been added to the right of each RF Cavity row in
+    RF_Main.opi. By unchecking, you indicate that the cavity is not in use,
+    and the related widgets get grayed out, and the SUM_STS pv in ALARM_REA
+    gets nullified.
+  Vacuum station status LEDs in the layout view at the top of Vacuum_main.opi,
+    have been edited in the QA area to accomodate the fact that those stations
+    have a RSTS with inverted logic compared to the rest of them.
+  Disconnects in Vacuum_Main.opi have been remedied by creating the missing
+    channels.
+  Disconnects related to the Sub Harmonic Buncher (SHB) in RF_Main.opi have
+    been addressed by either adding the channels, or removing the widgets.
+    Scaling PVs still have to be made, and have to accomodate the unique
+    implimentation that enumerates the signal component over that of the device
+    in the related EPICS pvs.
+  The widgets meant to reflect the yellow beacons for BTS45 & BTS46 end stations
+    in ReA6_Status.opi have been temporarily removed from the overview screen
+    until we get the correct PVs from controls.
+
+Other:
+  hlc_rea IOC has been deployed using procserv. This means all of our IOCs
+    are being deployed consistantly on the VM rea-hlapps.
+  The package ncsapps-nscl, made by priller to provide us access to panelmate
+    again, is made and a ticket was sent to helpme to get it installed on
+    rea3-8 and rea3-balcony.
+  Priller has updated the BACnet driver in a new water tower IOC. Haven't yet
+    checked to see if our resolution and update rate has been fixed.
+  All machines have the newest 4.6.3 csstudio, and phoebus installed.
+  We're waiting to hear from Joe Ryan and Tom Rockwell about what filepath is
+    being given for a shared network drive. This will enable abilities to save
+    scan data, to auto-generate beam reports, and save lynx data.
